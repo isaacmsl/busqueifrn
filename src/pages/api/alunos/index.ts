@@ -14,5 +14,6 @@ export default async(request: NextApiRequest, response: NextApiResponse) => {
 
     const data = requestDadosIFRNJson.result.records;
 
+    response.setHeader("Cache-Control", "max-age=0, s-maxage=86400, stale-while-revalidate, public")
     response.status(200).json(data)
 }
