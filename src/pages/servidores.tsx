@@ -2,7 +2,7 @@ import type { GetStaticProps } from "next"
 import { Servidor } from "../types/Servidor"
 
 import debugDev from "../utils/debugDev"
-import getResource from "../utils/getResource"
+import fetcher from "../utils/fetcher"
 const debugNamespace = "Servidores"
 
 interface ServidoresProps {
@@ -42,24 +42,9 @@ export default function Servidores({ servidores }: ServidoresProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { 
-    SERVIDORES_URI_LIMIT_5, 
-    SERVIDORES_URI_NO_LIMIT, 
-    USE_LIMITS 
-  } = process.env
+  const servidores: Servidor[] = await fetcher("/api/servidores")
+  const qntServidores = servidores.length
 
-  let forceUseLimits: boolean
-
-  let useLimits: boolean = (forceUseLimits !== undefined)
-    ? forceUseLimits
-    : USE_LIMITS == "true"
-  debugDev(debugNamespace, `Usar dados limitados: ${useLimits}`)
-  
-  const servidoresURI = (useLimits)? SERVIDORES_URI_LIMIT_5: SERVIDORES_URI_NO_LIMIT
-  debugDev(debugNamespace, `servidores URI: ${servidoresURI}`)
-
-  const servidores: Servidor[] = await getResource(useLimits, servidoresURI)
-  const qntServidores = servidores.length;
   debugDev(debugNamespace, `Qnt de servidores capturados: ${qntServidores}`)
 
   return {

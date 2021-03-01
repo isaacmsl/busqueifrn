@@ -2,7 +2,7 @@ import type { GetStaticProps } from "next"
 
 import debugDev from "../utils/debugDev"
 import { Aluno } from "../types/Aluno"
-import getResource from "../utils/getResource"
+import fetcher from "../utils/fetcher"
 const debugNamespace = "Alunos"
 
 interface AlunosProps {
@@ -36,24 +36,9 @@ export default function Alunos({ alunos }: AlunosProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { 
-    ALUNOS_URI_LIMIT_5, 
-    ALUNOS_URI_NO_LIMIT, 
-    USE_LIMITS 
-  } = process.env
+  const alunos: Aluno[] = await fetcher("/api/alunos")
+  const qntAlunos = alunos.length
 
-  let forceUseLimits: boolean
-
-  let useLimits: boolean = (forceUseLimits !== undefined)
-    ? forceUseLimits
-    : USE_LIMITS == "true"
-  debugDev(debugNamespace, `Usar dados limitados: ${useLimits}`)
-  
-  const alunosURI = (useLimits)? ALUNOS_URI_LIMIT_5: ALUNOS_URI_NO_LIMIT
-  debugDev(debugNamespace, `alunos URI: ${alunosURI}`)
-
-  const alunos: Aluno[] = await getResource(useLimits, alunosURI)
-  const qntAlunos = alunos.length;
   debugDev(debugNamespace, `Qnt de alunos capturados: ${qntAlunos}`)
 
   return {
