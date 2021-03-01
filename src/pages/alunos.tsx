@@ -2,7 +2,7 @@ import type { GetStaticProps } from "next"
 
 import debugDev from "../utils/debugDev"
 import { Aluno } from "../types/Aluno"
-import fetcher from "../utils/fetcher"
+import { getResource } from "../utils/getResource"
 const debugNamespace = "Alunos"
 
 interface AlunosProps {
@@ -36,7 +36,8 @@ export default function Alunos({ alunos }: AlunosProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const alunos: Aluno[] = await fetcher("/api/alunos")
+  const numberLimit = 5
+  const alunos: Aluno[] = await getResource(process.env.ALUNOS_BASE_URI, numberLimit)
   const qntAlunos = alunos.length
 
   debugDev(debugNamespace, `Qnt de alunos capturados: ${qntAlunos}`)

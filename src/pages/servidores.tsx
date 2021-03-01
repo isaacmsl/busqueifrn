@@ -2,7 +2,7 @@ import type { GetStaticProps } from "next"
 import { Servidor } from "../types/Servidor"
 
 import debugDev from "../utils/debugDev"
-import fetcher from "../utils/fetcher"
+import { getResource } from "../utils/getResource"
 const debugNamespace = "Servidores"
 
 interface ServidoresProps {
@@ -42,7 +42,8 @@ export default function Servidores({ servidores }: ServidoresProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const servidores: Servidor[] = await fetcher("/api/servidores")
+  const numberLimit = 5
+  const servidores: Servidor[] = await getResource(process.env.SERVIDORES_BASE_URI, numberLimit)
   const qntServidores = servidores.length
 
   debugDev(debugNamespace, `Qnt de servidores capturados: ${qntServidores}`)
